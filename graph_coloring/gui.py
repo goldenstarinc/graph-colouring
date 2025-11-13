@@ -11,6 +11,8 @@ from graph_coloring.algorithms.greedy import GreedyAlgorithm
 class GUIApp:
     """GUI для визуализации раскраски графа (DSATUR и Greedy)."""
     def __init__(self, root):
+        from graph_coloring.database_module import Database
+        self.db = Database()
         self.root = root
         self.root.title("Graph Coloring (DSATUR + Greedy)")
         self.graph = None
@@ -61,6 +63,12 @@ class GUIApp:
             self.graph = load_edgelist(path)
             if not self.graph or len(self.graph.adj) == 0:
                 raise Exception("Файл пуст.");
+            edges = []
+            for v in self.graph.adj:
+                for u in self.graph.adj[v]:
+                    if str(u) < str(v):
+                        edges.append((v, u))
+            self.db.add_graph(os.path.basename(path), self.graph.n(), self.graph.m(), edges)
             self._draw_graph(colorful=False)
             messagebox.showinfo("Загружено", f"Граф успешно загружен из файла:\n{os.path.basename(path)}")
         except Exception as e:
@@ -82,6 +90,16 @@ class GUIApp:
             res = GreedyAlgorithm(order_strategy=order_strategy).run(self.graph)
 
         elapsed = time.time() - start
+
+        graph_id = self.db.get_graphs()[-1][0]  # последний добавленный граф
+        self.db.add_coloring(
+            graph_id=graph_id,
+            algorithm=algo_name,
+            order_strategy=order_strategy,
+            colors_used=res["colors_used"],
+            time_sec=res["time"],
+            coloring=self.coloring
+        )
 
         self.coloring = res["coloring"]
         self.last_result = {

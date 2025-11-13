@@ -12,8 +12,8 @@
 - формировать текстовые отчёты `.txt`.
 
 ## Зависимости
-Tkinter==0.1.0
-
+Tkinter==8.6
+Sqlite3==3.44.0
 
 ## Состав
 - **graph_coloring_app.py** — основной код программы с GUI (Tkinter) и CLI.
@@ -21,23 +21,19 @@ Tkinter==0.1.0
 
 ## Локальный запуск
 ```bash
-python3 graph_coloring_app.py
+python3 main.py
 ```
 или в headless:
 ```bash
-python3 graph_coloring_app.py test
+python3 main.py test
 ```
 
 ## Docker
 ```bash
 docker build -t graph-coloring-app .
-docker run --rm graph-coloring-app test
+sudo docker run --rm -v $(pwd)/tests:/data -v $(pwd):/app app /data/1.txt dsatur
 ```
 
-При желании можно смонтировать каталог данных и запустить:
-```bash
-docker run --rm -v /path/to/data:/data graph-coloring-app run /data/edges.txt dsatur
-```
 
 ## Запуск тестов
 ```bash

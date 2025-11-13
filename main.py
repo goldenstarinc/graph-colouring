@@ -1,9 +1,11 @@
 import sys
-import tkinter as tk
+import os
 from graph_coloring.io_module import load_edgelist, export_coloring
 from graph_coloring.algorithms.dsatur import DSATURAlgorithm
 from graph_coloring.algorithms.greedy import GreedyAlgorithm
-from graph_coloring.gui import GUIApp
+
+def running_in_docker():
+    return os.path.exists('/.dockerenv')
 
 def cli_mode():
     if len(sys.argv) < 3:
@@ -16,10 +18,15 @@ def cli_mode():
     export_coloring("coloring.csv", res["coloring"])
     print("Saved to coloring.csv")
 
+def gui_mode():
+    import tkinter as tk
+    from graph_coloring.gui import GUIApp
+    root = tk.Tk()
+    GUIApp(root)
+    root.mainloop()
+
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
+    if running_in_docker() or len(sys.argv) > 1:
         cli_mode()
     else:
-        root = tk.Tk()
-        GUIApp(root)
-        root.mainloop()
+        gui_mode()
